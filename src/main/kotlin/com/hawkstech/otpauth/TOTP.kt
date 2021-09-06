@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
-import kotlin.collections.HashMap
 
 class TOTP(
     val userName: String,
