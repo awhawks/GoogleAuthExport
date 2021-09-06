@@ -54,15 +54,9 @@ internal class Decode {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    private fun processEntry(myLine: String): Payload? {
+    private fun processEntry(line: String): Payload? {
         var result: Payload? = null
-        if (!myLine.startsWith("#")) {
-            val line: String
-            line = if (myLine.trim().isNotEmpty()) {
-                myLine.substring(20)
-            } else {
-                myLine
-            }
+        if (!line.startsWith("#")) {
             if (line.length > 0) {
                 val uri = URI(line)
                 if (uri.scheme == "otpauth-migration") {
@@ -89,14 +83,22 @@ internal class Decode {
                         println("batch_index        [${result.batch_index}]")
                         println("batch_id           [${result.batch_id}]")
                         println("otpParametersCount [${result.otp_parameters.size}]")
+                        println( String.format("%-6s %-20s (%-40s)", "code", "name", "login") )
+                        println("====== ====================  ========================================")
                         result.otp_parameters.forEachIndexed { i, p ->
                             val dig = if( p.digits == DigitCount.DIGIT_COUNT_SIX ) 6 else 8
                             val totp = TOTP(p.name, "", p.issuer, p.algorithm, dig, p.counter, p.secret)
                             val state = Math.floorDiv(Instant.now().epochSecond, 30L)
                             val key1 = totp.generateTOTP( state )
                             val u = p.toUri().toString()
-                            val du = URLDecoder.decode( u )
-                            println("${key1} | entry[${i}] ${du}")
+                            val du = URLDecoder.decode( u, Charsets.UTF_8.name() )
+                            val tmp1 = du.substring( "otpauth://totp/".length )
+                            val tmp2 = tmp1.indexOf( ":" )
+                            val tmp3 = tmp1.indexOf( "?" )
+                            val name = tmp1.substring(0, tmp2)
+                            val login = tmp1.substring(tmp2+1, tmp3)
+                            val namef = String.format("%-20s (%-40s)", name, login)
+                            println("${key1} ${namef} | entry[${i}] ${du}")
                             //val sd = Base32().decode( p.secret )
                             //sd.forEach { b ->
                             //    val d = b.toUByte().toUInt().toInt()
@@ -106,10 +108,10 @@ internal class Decode {
                             //println()
                         }
                     } else {
-                        println("not an offline migration [${myLine}]")
+                        println("not an offline migration [${line}]")
                     }
                 } else {
-                    println("not an otpauth migration [${myLine}]")
+                    println("not an otpauth migration [${line}]")
                 }
             }
         }

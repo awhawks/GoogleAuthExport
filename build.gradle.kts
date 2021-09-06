@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.5.20"
     kotlin("plugin.serialization") version "1.5.20"
+    application
 }
 
 java {
@@ -15,6 +16,10 @@ java {
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
+
+application {
+    mainClass.set("com.hawkstech.otpauth.Decode")
+}
 
 repositories {
     mavenCentral()
