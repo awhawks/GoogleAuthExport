@@ -1,15 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-
 plugins {
-    kotlin("jvm") version "1.5.30"
-    kotlin("plugin.serialization") version "1.5.30"
-    id("org.beryx.jlink") version "2.24.1"
-    //id("de.jjohannes.extra-java-module-info") version "0.9"
+    kotlin("jvm")                  version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
+    id("org.beryx.jlink")          version "2.24.1"
     application
 }
-
-//extraJavaModuleInfo.automaticModule( "kotlin-stdlib-common-1.5.21.jar", "kotlin.stdlib.common")
 
 jlink {
     mergedModule {
@@ -57,20 +51,8 @@ repositories {
 
 dependencies {
     implementation( kotlin("stdlib") )
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.2")
 }
-
-//val compiler = javaToolchains.compilerFor {
-//    languageVersion.set( jvmLang )
-//    vendor.set(          jvmVend )
-//    implementation.set(  jvmImpl )
-//}
-//
-//tasks.withType<KotlinJvmCompile>().configureEach {
-//    val jdkHome = compiler.get().metadata.installationPath.asFile.absolutePath
-//    println("using JAVA_HOME=${jdkHome}")
-//    kotlinOptions.jdkHome = jdkHome
-//}
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
